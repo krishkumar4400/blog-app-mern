@@ -17,7 +17,19 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const {} = req.body;
+  const {email, password} = req.body;
+
+  const user = await userModel.findOne({email});
+
+  if(!user) {
+    throw new ApiError(400, "Incorrect email or password");
+  }
+
+  const isPasswordCorrect = await user.comparePassword(password);
+
+  if(!isPasswordCorrect) {
+    throw new ApiError(400, "Incorrect email or password");
+  }
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
